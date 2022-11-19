@@ -63,13 +63,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Setup VirtualEnv
-          command: |
-            echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
-            python3 -m venv venv
-            . venv/bin/activate
+          name: Build frontend
+          command: | 
             cd frontend
-            pip install --no-cache-dir -r requirements.txt
+            npm install
+            npm run build
       - setup_remote_docker        
       - run:
           name: Install Docker client
@@ -83,8 +81,6 @@ jobs:
           name: Build and push Docker image
           command: |
             cd backend
-            npm install
-            npm run build
             docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG} .
             echo "Authenticating and pushing image to Docker Hub"
             echo "${DOCKER_ACCESS_TOKEN}" | docker login -u mzchievous --password-stdin
