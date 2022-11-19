@@ -1,0 +1,25 @@
+# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
+version: 2.1
+jobs:
+  build-frontend:
+    docker:
+      - image: circleci/node:16.13.1-bullseye-browsers-legacy
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Build frontend
+          command: | 
+            cd frontend
+            npm install
+            npm test
+            npm run build
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
+
+workflows:
+  default:
+    jobs:
+      - build-frontend
