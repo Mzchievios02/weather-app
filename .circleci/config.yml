@@ -117,7 +117,7 @@ workflows:
   default:
     jobs:
       - build-frontend
-      # - build-backend
+      - build-backend
       # - deploy-infrastructure:
       #     requires:[build-frontend]
       # - deploy-image:
