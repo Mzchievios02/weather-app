@@ -119,13 +119,13 @@ jobs:
           command: |
             ssh -o StrictHostKeyChecking=no ec2-user@3.222.32.185 "/bin/bash ./deploy.sh"
 
-workflows:
-  default:
-    jobs:
-      - build-frontend
-      - build-backend
-          requires:[build-frontend]
-      # - deploy-infrastructure:
-      #     requires:[build-frontend]
-      # - deploy-image:
-      #     requires: requires:[build-frontend, deploy-infrastructure]
+  workflows:
+    default:
+      jobs:
+        - build-frontend
+        - build-backend
+            requires:[build-frontend]
+        # - deploy-infrastructure:
+        #     requires:[build-frontend]
+        # - deploy-image:
+        #     requires: requires:[build-frontend, deploy-infrastructure]
