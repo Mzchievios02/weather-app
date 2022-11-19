@@ -55,7 +55,7 @@
 #       - deploy-image:
 #           requires: requires:[build-frontend, deploy-infrastructure]
 
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
@@ -85,6 +85,6 @@ jobs:
             cd backend
             docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG} .
             echo "Authenticating and pushing image to Docker Hub"
-            echo "${DOCKER_ACESS_TOKEN} "| docker login -u mzchievous --password-stdin
+            echo "${DOCKER_ACCESS_TOKEN}" | docker login -u mzchievous --password-stdin
             # docker login -u $"{DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
             docker push ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG}
