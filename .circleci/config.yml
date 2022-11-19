@@ -88,7 +88,8 @@ jobs:
       - run:
           name: Setup VirtualEnv
           command: |
-            apt-get update && apt-get install python -y
+            apt-get update
+            apt-get install python3.8 python3-venv -y
             echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
             python3 -m venv venv
             . venv/bin/activate
