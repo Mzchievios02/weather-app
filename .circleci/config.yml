@@ -120,7 +120,7 @@ jobs:
             ssh -o StrictHostKeyChecking=no ec2-user@3.222.32.185 "/bin/bash ./deploy.sh"
 
 workflows:
-  default:
+  build:
     jobs:
       - build-frontend
       - build-backend
