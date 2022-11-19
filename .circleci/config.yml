@@ -69,20 +69,12 @@ jobs:
             npm install
             npm run build
       - setup_remote_docker        
-      # - run:
-      #     name: Install Docker client
-      #     command: |
-      #       set -x
-      #       VER="17.03.0-ce"
-      #       curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
-      #       tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-      #       mv /tmp/docker/* /usr/bin
       - run:
           name: Build and push Docker image
           command: |
             echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
             cd frontend
-            docker build -t ${DOCKER_USERNAME}/${FE_IMAGE_NAME}:${TAG} .
+            docker build -t ${DOCKER_USERNAME}/${FE_IMAGE_NAME} .
             echo "Authenticating and pushing image to Docker Hub"
             echo "${DOCKER_ACCESS_TOKEN}" | docker login -u mzchievous --password-stdin
             # docker login -u $"{DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
@@ -114,7 +106,7 @@ jobs:
           name: Build and push Docker image
           command: |
             cd backend
-            docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG} .
+            docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME} .
             echo "Authenticating and pushing image to Docker Hub"
             # echo "${DOCKER_ACCESS_TOKEN}" | docker login -u mzchievous --password-stdin
             docker login -u $"{DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
