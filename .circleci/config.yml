@@ -1,57 +1,88 @@
-# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
-version: 2.1
+# version: 2.1
+# jobs:
+#   build-frontend:
+#     docker:
+#       - image: circleci/node:16.13.1-bullseye-browsers-legacy
+#     steps:
+#       - checkout
+#       - restore_cache:
+#           keys: [frontend-build]
+#       - run:
+#           name: Build frontend
+#           command: | 
+#             cd frontend
+#             npm install
+#             npm run build
+#       - save_cache:
+#           paths: [frontend/node_modules]
+#           key: frontend-build
+
+#   deploy-infrastructure:
+#       docker:
+#         -   image: amazon/aws-cli
+#       steps:
+#         - checkout
+#         - run:
+#             name: install tar and gzip
+#             command: |
+#               yum install -y  tar gzip
+#         - run:
+#             name: Create EC2 instance
+#             command: |
+#               aws cloudformation deploy \
+#                 --template-file .circleci/files/ec2.yml \
+#                 --tags team=devops frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+#                 --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
+
+#   deploy-image:
+#     docker:
+#       - image: python3.7-alpine3.11
+#     steps:
+#       - checkout
+#       - add_ssh_keys:
+#           fingerprints: ["9c:22:cb:28:06:61:42:ac:90:c7:b3:cf:86:1f:49:c7"]
+#       - run:
+#           name: Run script
+#           command: |
+#             sh deploy.sh
+
+# workflows:
+#   default:
+#     jobs:
+#       - build-frontend
+#       - deploy-infrastructure:
+#           requires:[build-frontend]
+#       - deploy-image:
+#           requires: requires:[build-frontend, deploy-infrastructure]
+
+version: 2
 jobs:
-  build-frontend:
+  build:
     docker:
-      - image: circleci/node:16.13.1-bullseye-browsers-legacy
+      - image: python:3.8
     steps:
       - checkout
-      - restore_cache:
-          keys: [frontend-build]
       - run:
-          name: Build frontend
-          command: | 
-            cd frontend
-            npm install
-            npm run build
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-build
-
-  deploy-infrastructure:
-      docker:
-        -   image: amazon/aws-cli
-      steps:
-        - checkout
-        - run:
-            name: install tar and gzip
-            command: |
-              yum install -y  tar gzip
-        - run:
-            name: Create EC2 instance
-            command: |
-              aws cloudformation deploy \
-                --template-file .circleci/files/ec2.yml \
-                --tags team=devops frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
-
-  deploy-image:
-    docker:
-      - image: python3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-        fingerprints: ["9c:22:cb:28:06:61:42:ac:90:c7:b3:cf:86:1f:49:c7"]
-      - run:
-          name: Run script
+          name: Setup VirtualEnv
           command: |
-            sh deploy.sh
-
-workflows:
-  default:
-    jobs:
-      - build-frontend
-      - deploy-infrastructure:
-          requires:[build-frontend]
-      - deploy-image:
-          requires: requires:[build-frontend, deploy-infrastructure]
+            echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+            python3 -m venv venv
+            . venv/bin/activate
+            cd backend
+            pip install --no-cache-dir -r requirements.txt
+      - setup_remote_docker        
+      - run:
+        # installs a docker client that will be used to run the docker commands
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG} .
+            echo $DOCKER_PASSWORD | docker login -u ${DOCKER_USERNAME} --password-stdin
+            docker push ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG}
