@@ -2,12 +2,12 @@ version: "3.2"
 services:
   backend:
     restart: always
-    image: mzchievous/weather-backend:latest
+    image: mzchievous/backend-weather
     # command: |
     #   gunicorn -k uvicorn.workers.UvicornWorker main:app
 
   frontend:
-    image: mzchievous/weather-frontend:latest
+    image: mzchievous/frontend-weather
     ports:
       - "3000:3000"
     depends_on:
