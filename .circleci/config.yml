@@ -18,7 +18,40 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
 
+  deploy-infrastructure:
+      docker:
+        -   image: amazon/aws-cli
+      steps:
+        - checkout
+        - run:
+            name: install tar and gzip
+            command: |
+              yum install -y  tar gzip
+        - run:
+            name: Create EC2 instance
+            command: |
+              aws cloudformation deploy \
+                --template-file .circleci/files/ec2.yml \
+                --tags team=devops frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
+
+  deploy-image:
+    docker:
+      - image: python3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+        fingerprints: ["9c:22:cb:28:06:61:42:ac:90:c7:b3:cf:86:1f:49:c7"]
+      - run:
+          name: Run script
+          command: |
+            sh deploy.sh
+
 workflows:
   default:
     jobs:
       - build-frontend
+      - deploy-infrastructure:
+          requires:[build-frontend]
+      - deploy-image:
+          requires: requires:[build-frontend, deploy-infrastructure]
