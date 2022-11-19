@@ -3,6 +3,8 @@ services:
   backend:
     restart: always
     image: mzchievous/weather-backend:1.0.0
+    command: |
+      gunicorn -k uvicorn.workers.UvicornWorker main:app
 
   frontend:
     image: mzchievous/weather-frontend:1.0.0
@@ -11,17 +13,17 @@ services:
     depends_on:
       - backend
   
-  database:
-    image: mysql:5.7
-    volumes:
-      - app-mysql-data:/var/lib/mysql
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_USER: root
-      MYSQL_PASSWORD: <your-password>
-      MYSQL_DB: todos
-    depends_on:
-      - backend
+#   database:
+#     image: mysql:5.7
+#     volumes:
+#       - app-mysql-data:/var/lib/mysql
+#     environment:
+#       MYSQL_HOST: mysql
+#       MYSQL_USER: root
+#       MYSQL_PASSWORD: <your-password>
+#       MYSQL_DB: todos
+#     depends_on:
+#       - backend
 
-volumes:
-  app-mysql-data:
+# volumes:
+#   app-mysql-data:

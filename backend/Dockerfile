@@ -15,6 +15,7 @@ COPY . /my_app
 RUN cd app
 COPY requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt
+RUN pip install gunicorn
 
 CMD ["python3","app/main.py"]
 
