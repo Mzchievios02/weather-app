@@ -80,8 +80,9 @@ jobs:
       - run:
           name: Build and push Docker image
           command: |
-            cd backend
-            docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG} .
+            echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+            cd frontend
+            docker build -t ${DOCKER_USERNAME}/${FE_IMAGE_NAME}:${TAG} .
             echo "Authenticating and pushing image to Docker Hub"
             echo "${DOCKER_ACCESS_TOKEN}" | docker login -u mzchievous --password-stdin
             # docker login -u $"{DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
@@ -115,8 +116,8 @@ jobs:
             cd backend
             docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG} .
             echo "Authenticating and pushing image to Docker Hub"
-            echo "${DOCKER_ACCESS_TOKEN}" | docker login -u mzchievous --password-stdin
-            # docker login -u $"{DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+            # echo "${DOCKER_ACCESS_TOKEN}" | docker login -u mzchievous --password-stdin
+            docker login -u $"{DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
             docker push ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG}
 
 workflows:
