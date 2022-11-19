@@ -88,9 +88,12 @@ jobs:
       - run:
           name: Setup VirtualEnv
           command: |
-            sudo apt-get install python3 python3-venv -y
+            sudo su
+            wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+            apt update
+            apt-get install python3 python3-venv -y
             echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
-            sudo python3 -m venv venv
+            python3 -m venv venv
             . venv/bin/activate
             cd backend
             pip install --no-cache-dir -r requirements.txt
