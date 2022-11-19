@@ -124,6 +124,7 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
+          requires:[build-frontend]
       # - deploy-infrastructure:
       #     requires:[build-frontend]
       # - deploy-image:
