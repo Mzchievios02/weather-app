@@ -83,6 +83,7 @@ jobs:
       - run:
           name: Build and push Docker image
           command: |
+            cd backend
             docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG} .
             echo $DOCKER_PASSWORD | docker login -u ${DOCKER_USERNAME} --password-stdin
             docker push ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG}
