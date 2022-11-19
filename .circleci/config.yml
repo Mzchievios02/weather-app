@@ -114,10 +114,10 @@ jobs:
             echo "${DOCKER_ACCESS_TOKEN}" | docker login -u mzchievous --password-stdin
             # docker login -u $"{DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
             docker push ${DOCKER_USERNAME}/${BE_IMAGE_NAME}
-        - run:
-            name: Deploy app AWS
-            command: |
-              ssh -o StrictHostKeyChecking=no ec2-user@3.222.32.185 "/bin/bash ./deploy.sh"
+      - run:
+          name: Deploy app AWS
+          command: |
+            ssh -o StrictHostKeyChecking=no ec2-user@3.222.32.185 "/bin/bash ./deploy.sh"
 
 workflows:
   default:
