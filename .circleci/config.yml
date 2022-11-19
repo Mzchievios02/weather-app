@@ -72,7 +72,6 @@ jobs:
             pip install --no-cache-dir -r requirements.txt
       - setup_remote_docker        
       - run:
-        # installs a docker client that will be used to run the docker commands
           name: Install Docker client
           command: |
             set -x
@@ -85,5 +84,5 @@ jobs:
           command: |
             cd backend
             docker build -t ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG} .
-            echo $DOCKER_PASSWORD | docker login -u ${DOCKER_USERNAME} --password-stdin
+            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
             docker push ${DOCKER_USERNAME}/${BE_IMAGE_NAME}:${TAG}
